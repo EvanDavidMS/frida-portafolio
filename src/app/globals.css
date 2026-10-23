@@ -1,26 +1,371 @@
 @import "tailwindcss";
 
+@theme {
+  /* Committed pink: every neutral is tinted toward the brand hue (350) */
+  --color-mochi: oklch(0.975 0.014 350);
+  --color-blush: oklch(0.935 0.042 350);
+  --color-petal: oklch(0.875 0.078 350);
+  --color-pink: oklch(0.79 0.125 352);
+  --color-hot: oklch(0.565 0.21 357);
+  --color-berry: oklch(0.42 0.135 355);
+  --color-ink: oklch(0.29 0.085 355);
+  --color-sky: oklch(0.94 0.026 235);
+  --color-sky-ink: oklch(0.46 0.085 240);
+  --color-butter: oklch(0.95 0.07 95);
+
+  --font-display: var(--font-bagel);
+  --font-sans: var(--font-nunito);
+  --font-hand: var(--font-caveat);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --z-sticky: 30;
+  --z-modal: 50;
+  --z-curtain: 60;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  /* The site is always pink & light, even if the OS is in dark mode */
+  color-scheme: only light;
+  background: var(--color-mochi);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Lenis smooth scroll (its stock CSS disables iframe clicks, which would break the Canva embeds) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-mochi);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+p {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--color-hot);
+  color: white;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-hot);
+  outline-offset: 3px;
+}
+
+/* ---------- Surfaces ---------- */
+
+.checker {
+  --c1: var(--color-blush);
+  --c2: var(--color-mochi);
+  --size: 76px;
+  background-color: var(--c2);
+  background-image: conic-gradient(var(--c1) 25%, transparent 0 50%, var(--c1) 0 75%, transparent 0);
+  background-size: var(--size) var(--size);
+}
+.checker-pink {
+  --c1: var(--color-pink);
+  --c2: var(--color-petal);
+  --size: 104px;
+}
+.checker-drift {
+  animation: checker-drift 18s linear infinite;
+}
+@keyframes checker-drift {
+  to {
+    background-position: calc(var(--size) * 2) var(--size);
+  }
+}
+
+.sticker {
+  filter: drop-shadow(0 5px 6px oklch(0.42 0.135 355 / 0.22));
+}
+.sticker-card {
+  background: white;
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 6px 8px -4px oklch(0.42 0.135 355 / 0.28);
+}
+
+.label-tape {
+  font-family: var(--font-hand);
+  background: var(--color-petal);
+  color: var(--color-berry);
+  box-shadow: 0 3px 6px -3px oklch(0.42 0.135 355 / 0.4);
+}
+
+/* ---------- Page transition: three blob panels that cover, then lift ---------- */
+
+.pt-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-curtain);
+  pointer-events: none;
+  overflow: hidden;
+}
+.pt-root[data-active="true"] {
+  pointer-events: auto;
+}
+.pt-panel {
+  position: absolute;
+  inset: -14vh 0;
+  border-radius: 50% / 14vh;
+  transform: translateY(110%);
+  will-change: transform;
+}
+.pt-content {
+  position: absolute;
+  inset: 14vh 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.75rem;
+  color: white;
+  text-align: center;
+}
+
+/* First load: panels start covering and lift without JS, so content is never gated */
+.pt-intro .pt-panel {
+  animation: pt-intro-lift 0.9s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.pt-intro .pt-panel[data-layer="3"] {
+  animation-delay: 0.15s;
+}
+.pt-intro .pt-panel[data-layer="2"] {
+  animation-delay: 0.23s;
+}
+.pt-intro .pt-panel[data-layer="1"] {
+  animation-delay: 0.31s;
+}
+@keyframes pt-intro-lift {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(-110%);
+  }
+}
+.pt-intro .pt-content > * {
+  animation: curtain-heart 0.5s var(--ease-out-quart) both;
+}
+.pt-beat {
+  animation: pt-beat 0.9s ease-in-out infinite;
+}
+@keyframes pt-beat {
+  0%,
+  100% {
+    scale: 1;
+  }
+  20% {
+    scale: 1.18;
+  }
+  40% {
+    scale: 0.96;
+  }
+}
+@keyframes curtain-heart {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+
+/* ---------- Hero choreography ---------- */
+
+.pop-letter {
+  display: inline-block;
+  animation: pop-letter 0.7s var(--ease-out-expo) both;
+  animation-delay: calc(0.55s + var(--i) * 45ms);
+}
+@keyframes pop-letter {
+  from {
+    opacity: 0;
+    translate: 0 0.5em;
+    scale: 1.35;
+    rotate: var(--r, 8deg);
+    filter: blur(6px);
+  }
+}
+
+.rise {
+  animation: rise 0.8s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0.9s);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+    filter: blur(4px);
+  }
+}
+
+.slap {
+  animation: slap 0.75s var(--ease-out-expo) both;
+  animation-delay: var(--d, 1s);
+}
+@keyframes slap {
+  from {
+    opacity: 0;
+    scale: 1.6;
+    rotate: var(--r, -14deg);
+    filter: blur(8px);
+  }
+}
+
+.clip-in {
+  animation: clip-in 1.1s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0.6s);
+}
+@keyframes clip-in {
+  from {
+    clip-path: inset(50% 50% 50% 50% round 16px);
+    rotate: -6deg;
+    scale: 0.9;
+  }
+}
+
+.bob {
+  animation: bob 5s ease-in-out infinite;
+  animation-delay: var(--b, 0s);
+}
+@keyframes bob {
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+/* ---------- Scroll-driven reveals (progressive: unsupported browsers just show content) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-up {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 28%;
+    }
+    @keyframes reveal-up {
+      from {
+        opacity: 0;
+        translate: 0 60px;
+        scale: 0.96;
+      }
+    }
+
+    .reveal-clip {
+      animation: reveal-clip linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+    @keyframes reveal-clip {
+      from {
+        clip-path: inset(18% 12% 18% 12% round 16px);
+        scale: 1.08;
+      }
+    }
+
+    /* Words light up one after another as the paragraph scrolls through */
+    .ink-words {
+      view-timeline-name: --ink;
+    }
+    .ink-word {
+      animation: ink-word linear both;
+      animation-timeline: --ink;
+      animation-range: cover calc(18% + var(--i) * 0.85%) cover calc(24% + var(--i) * 0.85%);
+    }
+    @keyframes ink-word {
+      from {
+        opacity: 0.18;
+      }
+    }
+
+    /* Discipline cards fan out from a stack */
+    @media (min-width: 640px) {
+      .fan-card {
+        animation: fan-card linear both;
+        animation-timeline: --fan;
+        animation-range: entry 10% cover 45%;
+      }
+      .fan-stage {
+        view-timeline-name: --fan;
+      }
+      @keyframes fan-card {
+        from {
+          translate: var(--fx, 0) 40px;
+          rotate: var(--fr, 0deg);
+        }
+      }
+    }
+
+    .spin-on-scroll {
+      animation: spin-on-scroll linear both;
+      animation-timeline: view();
+    }
+    @keyframes spin-on-scroll {
+      from {
+        rotate: -40deg;
+      }
+      to {
+        rotate: 80deg;
+      }
+    }
+  }
+}
+
+/* ---------- Print (the CV page prints as a clean A4 sheet) ---------- */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: white !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .pt-root,
+  .no-print {
+    display: none !important;
+  }
+  .cv-sheet {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    rotate: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+  .pt-root {
+    display: none;
+  }
 }

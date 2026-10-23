@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frida Delgadillo · Portafolio
 
-## Getting Started
+Portafolio de **Frida Delgadillo García**, estudiante de Diseño Gráfico y Animación (Torreón, México): animación 2D, modelado 3D, branding y UX/UI.
 
-First, run the development server:
+Disponible en español (`/es`) e inglés (`/en`), con CV imprimible en `/es/cv` y `/en/cv`.
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, rutas `/[lang]`) + TypeScript
+- Tailwind CSS v4
+- [Motion](https://motion.dev) para animaciones y [Lenis](https://lenis.darkroom.engineering) para scroll suave
+
+## Desarrollo
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre http://localhost:3000 (redirige a `/es` o `/en` según el idioma del navegador).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Dónde editar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Qué | Archivo |
+| --- | --- |
+| Textos del sitio y del CV | `src/i18n/dictionaries/es.ts` y `en.ts` |
+| Proyectos (textos, imágenes, enlaces) | `src/data/projects.ts` |
+| Correo de contacto | `siteData.email` en `src/data/projects.ts` |
+| Imágenes de proyectos | `public/projects/<slug>/NN.webp` |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Si un cambio en `globals.css` no aparece en desarrollo, detén el servidor, borra `.next` y vuelve a correr `npm run dev`.
